@@ -10,7 +10,7 @@ language: 'en-uk'
 name: '사무실에서 쓰는 Python'
 description: "Python, Pandas를 Excel보다 사랑하는 직장인을 위한 블로그 "
 
-short_url: 'jekyller.github.io/jasper/'
+short_url: 'emilkwak.github.io/'
 google_analytics: UA-69281367-1
 disqus: username
 # edit baseurl to simply '/' if using as your personal page (instead of a project page)
@@ -46,12 +46,12 @@ plugins: [jekyll-paginate]
 safe: false
 lsi: false
 username: jekyller
-repo: jasper
+repo: emilkwak
 branch: master
-relative_source: ../jasper/
-destination: ../jasper-pages/
-production_url:  https://jekyller.github.io/jasper/
-source_url:  https://github.com/jekyller/jasper/
+relative_source: ../emilkwak/
+destination: ../emilkwak-pages/
+production_url:  https://jekyller.github.io/
+source_url:  https://github.com/emilkwak/emilkwak.github.io/
 
 exclude:
   - README.md
