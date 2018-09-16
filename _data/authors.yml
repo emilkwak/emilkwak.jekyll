@@ -38,3 +38,11 @@ martin:
   url: jekyller.github.io/jasper
   bio: An American pastor, activist, humanitarian. People know me for leading the African-American Civil Rights movement using nonviolent civil disobedience.
   assets: assets/images/martin.jpg
+emil:
+  username: emil
+  name: Emil Kwak
+  location: Seoul, Republic of Korea
+  url_full:
+  url:
+  bio: An ordinary salaryman making use of Python replacing Microsoft Excel in office
+  assets: assets/images/pooh01.jpg

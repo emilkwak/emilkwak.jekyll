@@ -7,8 +7,8 @@ paginate: 5
 language: 'en-uk'
 
 # Website info
-name: 'Finding The Way Home'
-description: "A beautiful narrative written with the world's most elegant publishing platform. The story begins here."
+name: '사무실에서 쓰는 Python'
+description: "Python, Pandas를 Excel보다 사랑하는 직장인을 위한 블로그 "
 
 short_url: 'jekyller.github.io/jasper/'
 google_analytics: UA-69281367-1

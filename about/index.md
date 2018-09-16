@@ -2,12 +2,8 @@
 layout: page
 title: About
 navigation: true
-logo: 'assets/images/ghost.png'
+logo: 'assets/images/pooh03.png'
 current: about
 ---
 
-This is a demo blog for Ghost, it contains dummy content which allows you to click around and see what a Ghost blog running the default theme looks like.
-
-We use this for testing and for reference!
-
-If you'd like to set up your own blog, head on over to [https://ghost.org](https://ghost.org) and sign up.
+이 블로그는 Emil Kwak의 장소입니다.
