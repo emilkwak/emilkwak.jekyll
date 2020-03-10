@@ -1,0 +1,90 @@
+<ul>
+  <li>설치 환경: Ubuntu(Linux)</li>
+  <li>Ruby 개발환경 설치
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt-get install ruby-dev
+gem install jekyll bundler
+</code></pre></div>    </div>
+  </li>
+  <li>Jekyll 테마 복제(clone)받기
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone https://github.com/jekyller/jasper.git
+</code></pre></div>    </div>
+    <ul>
+      <li>이 경우 <code class="highlighter-rouge">jasper</code>라는 디렉토리가 생겨 그 곳에 소스와 파일들이 내려받아짐.</li>
+      <li>Jekyll 테마는 <a href="https://jekyllthemes.io/">jekyllthemes.io</a>와 같은 곳에서 찾아 내려받거나 Github에서 복제받을 수 있음.</li>
+    </ul>
+  </li>
+  <li>의존성 있는 Ruby 라이브러리 일괄 설치하기
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd jasper
+sudo bundle install
+</code></pre></div>    </div>
+    <ul>
+      <li>복제받은 테마의 <code class="highlighter-rouge">Gemfile.lock</code> 파일을 참조해 의존성 있는 모든 Ruby 라이브러리를 일괄 설치함.</li>
+    </ul>
+  </li>
+  <li>Jekyll 서버 로컬로 구동하기
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cd jasper
+sudo nano _config.yml
+sudo bundle exec jekyll serve
+sudo bundle exec jekyll serve --host 0.0.0.0 --port 7070
+</code></pre></div>    </div>
+    <ul>
+      <li><code class="highlighter-rouge">_config.yml</code>의 baseurl을 다음과 같이 변경(이렇게 해야 테마 assets(이미지, 레이아웃 등)가 적용되지 않거나 깨져 적용되는 현상을 없앨 수 있음.)
+        <blockquote>
+          <p>(변경 전) baseurl: /some/path/
+(변경 후) baseurl: /</p>
+        </blockquote>
+      </li>
+      <li><code class="highlighter-rouge">jekyll serve</code>를 <code class="highlighter-rouge">bundle</code>과 함께 실행하는 이유: <code class="highlighter-rouge">bundle install</code>로 설치한 루비 라이브러리들이 적용되는 환경에서 실행하기 위함.</li>
+      <li><code class="highlighter-rouge">--host</code>, <code class="highlighter-rouge">--port</code>: Jekyll 서버를 구동할 IP 주소와 포트를 명시함. 별도 명시하지 않을 경우 localhost:4000으로 구동함.</li>
+      <li><code class="highlighter-rouge">--host 0.0.0.0</code>: 모든 IP 주소 허용 - 외부 공개를 위한 설정</li>
+    </ul>
+  </li>
+  <li>(참고) 서버 실행 없이 Jekyll 빌드만 하기
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo bundle exec jekyll build --verbose
+</code></pre></div>    </div>
+    <ul>
+      <li><code class="highlighter-rouge">jekyll serve</code>를 하면 자동으로 빌드까지 한 후 서버를 구동함.</li>
+      <li><code class="highlighter-rouge">jekyll build</code>는 서버 구동 없이 빌드만 시킴.</li>
+      <li><code class="highlighter-rouge">--verbose</code>: 빌드 과정(빌드 대상, 결과) 로그를 표시하면서 빌드함.</li>
+    </ul>
+  </li>
+  <li>(참고) 미래 일자 포스트 빌드하기
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo bundle exec jekyll build --future
+</code></pre></div>    </div>
+    <ul>
+      <li><code class="highlighter-rouge">--future</code>: 원래는 미래 일자 포스트 빌드가 불가하나 <code class="highlighter-rouge">--future</code> 부여 시 가능함.</li>
+    </ul>
+  </li>
+  <li>(참고) 특정 포트가 이미 점유된 경우, 점유한 프로세스 강제 종료하기
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo lsof -i :7070
+sudo kill 582
+</code></pre></div>    </div>
+    <ul>
+      <li>7070 포트를 점유하고 있는 프로세스의 ID인 582를 확인해 <code class="highlighter-rouge">kill</code>함.</li>
+    </ul>
+  </li>
+  <li>나의 Github Pages로 배포하기 위한 준비
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git remote -v
+git remote set-url origin https://github.com/emilkwak/emilkwak.github.io
+</code></pre></div>    </div>
+    <ul>
+      <li><code class="highlighter-rouge">git remote -v</code>를 보면, 현재 복제받은 Github 주소를 그대로 origin으로 갖고 있음을 확인할 수 있음. 이대로 둔 채 <code class="highlighter-rouge">git push</code>하게 되면 ‘남의 repository’로 배포하는 의도치 않은(?) 시도를 하게 됨.</li>
+      <li><code class="highlighter-rouge">git remote set-url</code>을 통해 origin이 나의 Github Pages용 repository를 향하도록 함.</li>
+      <li>이 경우 emilkwak.github.io라는 repository가 나의 Github에 이미 생성되어 있음을 전제로 함.</li>
+    </ul>
+  </li>
+  <li>(참고) origin을 유지한 채 origin2를 새로 만들어 사용하기
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git remote add orign2 https://github.com/emilkwak/emilkwak.github.io
+</code></pre></div>    </div>
+  </li>
+  <li>나의 Github Pages로 동기화하기
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add .
+git commit -m "something to say"
+git push origin master
+git push -f origin master
+</code></pre></div>    </div>
+    <ul>
+      <li><code class="highlighter-rouge">git push -f</code>: <code class="highlighter-rouge">git pull</code>을 통한 동기화 없이 강제로 배포(overwrite)하게 함.</li>
+    </ul>
+  </li>
+</ul>

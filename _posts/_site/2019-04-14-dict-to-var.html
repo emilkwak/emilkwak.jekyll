@@ -1,0 +1,18 @@
+<p>Python의 딕셔너리(<code class="highlighter-rouge">dict</code>)는 C++나 Java의 그것보다 훨씬 유연하고 사용하기도 편합니다. 딕셔너리가 Python에서 자주 사용되는 이유이기도 하지요. 딕셔너리를 선언하고 정의하는 방법도 매우 간단합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">d</span> <span class="o">=</span> <span class="p">{</span><span class="s">'var_a'</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+     <span class="s">'var_b'</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+     <span class="s">'var_c'</span><span class="p">:</span> <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],}</span>
+</code></pre></div></div>
+
+<p>이렇게 정의된 딕셔너리의 각 요소는 <code class="highlighter-rouge">d['var_a']</code>와 같이 접근할 수 있지요.</p>
+
+<p>한편, 경우에 따라서 <code class="highlighter-rouge">print(d['var_a'])</code>처럼 사용하는 것보다 <code class="highlighter-rouge">print(var_a)</code>처럼 변수로 만들어 사용하는 것이 편할 때가 있지요. 작업중이던 변수들을 딕셔너리로 묶어 <code class="highlighter-rouge">pickle.dump()</code>했다가 다시 <code class="highlighter-rouge">pickle.load()</code>할 때 등이 대표적인 경우이겠죠.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="k">exec</span><span class="p">(</span><span class="s">'</span><span class="si">%</span><span class="s">s = </span><span class="si">%</span><span class="s">s'</span> <span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>위와 같이 하면 딕셔너리의 각 요소를 변수로 만들 수 있습니다. 두 줄짜리 간단한 코드지만 원하는 바를 쉽게 달성하게 해 주죠. 위 코드를 간단히 살펴 봅시다. <code class="highlighter-rouge">d.items()</code>는 딕셔너리를 키(key)와 값(value)의 쌍으로 나열시키고, 이를 <code class="highlighter-rouge">for</code>로 iteration합니다. 각 iteration에서 키를 변수명으로 삼아 변수에 값을 할당하는 구문을 문자열로 만들고 이 문자열을 <code class="highlighter-rouge">exec()</code>에 입력시킵니다. <code class="highlighter-rouge">exec()</code>은 말그대로 주어진 문자열을 Python 구문으로 여겨 실행시키지요.</p>
+
+<p>생각보다 간단하고 짧은 <code class="highlighter-rouge">for</code> 루프만으로 딕셔너리 각 요소의 변수로의 전환이 가능하지요?</p>

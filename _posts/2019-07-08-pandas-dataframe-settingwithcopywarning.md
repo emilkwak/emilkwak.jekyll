@@ -1,0 +1,99 @@
+---
+layout: post
+cover: 'assets/images/office01.jpg'
+navigation: True
+title: Pandas의 DataFrame 사용 중 SettingWithCopyWarning 발생할 때
+date: 2019-07-08 23:00:00
+tags: tech python pandas dataframe settingwithcopywarning
+subclass: 'post tag-speeches'
+logo: 'assets/images/pooh03.png'
+author: emil
+categories: tech
+---
+
+Python의 Pandas 라이브러리 사용자에게 DataFrame은 매우 중요한 도구입니다. R 언어의 데이터프레임을 대체하기 위해 고안된 Pandas DataFrame은 이제 R을 훨씬 뛰어넘어 데이터 처리의 절대적인 도구로서 위치를 점하고 있습니다.
+
+Pandas DataFrame은 R 언어의 관련 기능을 상당수를 대체한 것에 모자라, 커서(cursor)로 처리하는 고수준(high-level) 프로그래밍 언어에서의 SQL 처리와 PL/SQL을 대체했습니다. 최근에는 Excel 등 스프레드시트(spreadsheet)의 기능도 대체하기 시작했고요.
+
+원천 자료에 일차 데이터 처리가 반영된 이차 자료를 만들고 계속적 처리를 통해 n차 자료를 만들면서, 여러 n차 자료들을 분석과 추론으로 엮어 통찰(insight)를 얻어 내는 일은 데이터 분석의 기본이자 핵심입니다.
+
+이 과정에서 DataFrame을 SELECT하고(row 관점의 filtering) PROJECT하여(column 관점의 filtering) 가공된 파생 DataFrame을 만들고, 여기에 다시 연산을 가해 분석적 통찰이 반영된 DataFrame을 만듭니다. 이와 같은 과정이 여러 번 반복되지요.
+
+파생된 DataFrame을 분석해 발견한 데이터를 그 DataFrame에 열(column)로서 추가하는 일 또한 자주 사용될 것입니다. 그런데 DataFrame에 열을 추가하는 과정에서 Pandas 자체에서 발생시키는 경고(warning) 메시지를 몇 번 본 적 있을 것이입니다. SettingWithCopyWarning라는 이름의 경고 말이죠.
+
+이 경고가 어떤 상황에 발생하는지 원리를 이해하여 런타임 전에 미리 예방할 수 있다면 번거로움이 줄어들 것입니다. 어떤 경우에 발생할까요? 원천이 되는 DataFrame의 일부로 구성된 파생 DataFrame에 변경을 가하는 경우 발생합니다. 쉬운 예제로 SettingWithCopyWarning의 발생을 재현할 수 있지요. 아래처럼요.
+
+```python
+import pandas as pd, numpy as np
+
+nums = np.random.randint(-10, 10, 10)
+print(nums)
+# [-9 -3  5  9  7 -6 -2  4 -5  6]
+
+df = pd.DataFrame(nums, columns=['NUM'])
+#    NUM
+# 0   -9
+# 1   -3
+# 2    5
+# 3    9
+# 4    7
+# 5   -6
+# 6   -2
+# 7    4
+# 8   -5
+# 9    6
+
+df_positive = df[df.NUM >= 0]
+df_positive['SQUARED'] = df_positive.NUM ** 2
+# SettingWithCopyWarning: 
+# A value is trying to be set on a copy of a slice from a DataFrame.
+# Try using .loc[row_indexer,col_indexer] = value instead
+# 
+# See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+
+print(df_positive)
+#    NUM  SQUARED
+# 2    5       25
+# 3    9       81
+# 4    7       49
+# 7    4       16
+# 9    6       36
+```
+
+왜 이런 경고를 발생시킬까요? 번거롭기만 하고 별 이득은 없는 validation인 것 같은데 말이지요. 그렇지 않습니다. 매우 중요한 역할을 하는 경고입니다. Pandas DataFrame은 연쇄적인(chained) 연산과 처리를 허용합니다. SQL에서 테이블을 SELECT한 결과가 다시 테이블이 되어 다시 SELECT할 수 있는 것과 유사하게, DataFrame도 그런 성질을 띱니다. 이것이 관계형 데이터베이스의 closure에 해당하는 개념인 것이죠.
+
+한편 DataFrame도 자료구조(data structure)인 셈이므로 이를  표현하기 위해 메모리를 점유합니다. 등장하는 모든 DataFrame에 메모리를 할당하려 들면 금방 바닥을 보이게 되겠지요. Pandas에서는 원천 DataFrame을 생성할 때만 메모리를 할당하고 이로부터 파생되는 DataFrame은 원천 DataFrame을 이미 적재된 메모리에 접근케 하며 이로 인해 메모리를 절약합니다. 원천 DataFrame의 부분집합(subset)에 view를 형성한다 보면 됩니다.
+
+파생된 DataFrame에 열(columns)을 하나 추가하면 어떻게 될까요? 한 DataFrame의 부분집합으로 이뤄진 view에 변경을 가하는 셈이지요. 원천 DataFrame에도 그 열을 붙여 줘야 할까요? 아니면 파생 DataFrame에만 붙이면 될까요? 원천 DataFrame에 그 열을 붙인다면, 파생 DataFrame에서 등장하지 않은 행(row)들에도 무언가를 붙여야 할까요, 말아야 할까요? 붙인다면 None으로 채워야 할까요?
+
+이런 복잡한 질문에는 정답이 없습니다. 실제 개발하는 사람의 의도에 따라 원하는 바가 다를 수 밖에 없습니다. Pandas에서는 파생 DataFrame에 수정을 가하는 것을 권장하지 않습니다.(그래서 경고를 띄우는 것이죠.) 대신 Pandas는 copy() 메서드를 통해 파생 DataFrame에 독립적인 메모리를 부여한 뒤 여기에 수정을 가하도록 유도하지요. view를  실질화(materialization)시키는 것이죠.
+
+요컨대 SettingWithCopyWarning의 발생을 예방하기 위한 가장 쉬운 방법은 파생 DataFrame에 copy() 메서드를 실행해, 원천 DataFrame과 별도인 메모리 공간을 파생 DataFrame에 부여하는 것입니다. 원천과 파생이 완전히 갈라서는 것이지요. 위에서 던졌던 복잡하고 귀찮은 질문들은 대답할 필요가 없게 되는 것이죠.
+
+```python
+# with SettingWithCopyWarning
+df_positive = df[df.NUM >= 0]
+df_positive['SQUARED'] = df_positive.NUM ** 2
+# SettingWithCopyWarning: 
+# A value is trying to be set on a copy of a slice from a DataFrame.
+# Try using .loc[row_indexer,col_indexer] = value instead
+# 
+# See the caveats in the documentation: http://pandas.pydata.org/pandas-docs/stable/indexing.html#indexing-view-versus-copy
+
+# without SettingWithCopyWarning
+df_positive = df[df.NUM >= 0].copy()
+df_positive['SQUARED'] = df_positive.NUM ** 2
+
+print(df_positive)
+#    NUM  SQUARED
+# 2    5       25
+# 3    9       81
+# 4    7       49
+# 7    4       16
+# 9    6       36
+```
+
+물론 이 경우 파생 DataFrame에 메모리가 부여되므로 사용 가능한 총 메모리는 줄어들게 됩니다. 이를 잘 감안해 사용해야 합니다. copy()를 막 하다 보면 어느순간 메모리가 바닥나는 상황도 생길 수 있으니까요.
+
+어쨌든 SettingWithCopyWarning은 의도치 않은 구현을 경고하는 중요한 장치입니다. 경고를 무시하고 개발해도 원하는 처리가 당장 된다고 해서 SettingWithCopyWarning을 무시하는 것보다는, SettingWithCopyWarning가 발생하지 않는 방식으로 개발하는 습관이 중요합니다.
+

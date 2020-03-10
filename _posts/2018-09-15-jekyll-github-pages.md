@@ -37,7 +37,7 @@ sudo bundle install
 cd jasper
 sudo nano _config.yml
 sudo bundle exec jekyll serve
-sudo bundle exec jekyll serve --host 0:0:0:0 --port 7070
+sudo bundle exec jekyll serve --host 0.0.0.0 --port 7070
 ```
 	- `_config.yml`의 baseurl을 다음과 같이 변경(이렇게 해야 테마 assets(이미지, 레이아웃 등)가 적용되지 않거나 깨져 적용되는 현상을 없앨 수 있음.)
 		> (변경 전) baseurl: /some/path/
@@ -53,6 +53,12 @@ sudo bundle exec jekyll build --verbose
 	- `jekyll serve`를 하면 자동으로 빌드까지 한 후 서버를 구동함.
 	- `jekyll build`는 서버 구동 없이 빌드만 시킴.
 	- `--verbose`: 빌드 과정(빌드 대상, 결과) 로그를 표시하면서 빌드함.
+
+* (참고) 미래 일자 포스트 빌드하기
+```
+sudo bundle exec jekyll build --future
+```
+	- `--future`: 원래는 미래 일자 포스트 빌드가 불가하나 `--future` 부여 시 가능함.
 
 * (참고) 특정 포트가 이미 점유된 경우, 점유한 프로세스 강제 종료하기
 ```

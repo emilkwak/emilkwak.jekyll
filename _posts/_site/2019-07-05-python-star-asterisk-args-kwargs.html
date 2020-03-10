@@ -1,0 +1,73 @@
+<p>Python에는 우리나라에서 흔히 별표라 부르는 asterisk(<code class="highlighter-rouge">*</code>)를 활용한 특이한 문법(syntax)가 있습니다. <code class="highlighter-rouge">*args</code>, <code class="highlighter-rouge">**kwargs</code>라고 해도 통합니다. C나 C++이 아닌 Python에서 <code class="highlighter-rouge">*</code>와 <code class="highlighter-rouge">**</code>를 문두에 사용하는 문법이 있다니 어색하긴 하지만, 용도를 제대로 알면 유용히 쓸 수 있습니다.</p>
+
+<h3 id="메서드-정의-시-파라미터parameter로-쓰일-때">메서드 정의 시 파라미터(parameter)로 쓰일 때</h3>
+
+<p>메서드 정의 시 파라미터(parameter)로 <code class="highlighter-rouge">*args</code>가 사용되면 그 메서드 내에서 <code class="highlighter-rouge">args</code>는 메서드 호출 시 투입된 아규먼트(argument)의 튜플(tuple)이 됩니다. 파라미터의 개수가 고정적이지 않은 메서드의 정의 시 사용됩니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">args_as_parameter</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+	<span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">args</span><span class="p">))</span>
+	<span class="k">print</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+<span class="n">args_as_parameter</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'three'</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
+<span class="c"># &lt;class 'tuple'&gt;</span>
+<span class="c"># (1, '2', 'three', 4.0)</span>
+</code></pre></div></div>
+
+<p>메서드 정의 시 파라미터로 <code class="highlighter-rouge">**kwargs</code>가 사용되면 그 메서드 내에서 <code class="highlighter-rouge">kwargs</code>는 메서드 호출 시 투입된 아규먼트의 딕셔너리(dict)가 됩니다. 당연히 아규먼트는 key-value 형태여야 합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">def</span> <span class="nf">kwargs_as_parameter</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+	<span class="k">print</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">kwargs</span><span class="p">))</span>
+	<span class="k">print</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+
+<span class="n">kwargs_as_parameter</span><span class="p">(</span><span class="n">first</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">second</span><span class="o">=</span><span class="s">'2'</span><span class="p">,</span> <span class="n">third</span><span class="o">=</span><span class="s">'three'</span><span class="p">,</span> <span class="n">fourth</span><span class="o">=</span><span class="mf">4.0</span><span class="p">)</span>
+<span class="c"># &lt;class 'dict'&gt;</span>
+<span class="c"># {'first': 1, 'second': '2', 'third': 'three', 'fourth': 4.0}</span>
+</code></pre></div></div>
+
+<h3 id="메서드-호출-시-아규먼트argument로-쓰일-때">메서드 호출 시 아규먼트(argument)로 쓰일 때</h3>
+
+<p>메서드 호출 시 아규먼트로 <code class="highlighter-rouge">*args</code>를 투입한다 가정할 때, <code class="highlighter-rouge">args</code>는 튜플(또는 리스트, list 등)이어야 합니다. 따라서 앞서 정의한 메서드 <code class="highlighter-rouge">args_as_parameter()</code>를 다음과 같이 호출할 수 있습니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">input_tuple</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'three'</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
+<span class="n">args_as_parameter</span><span class="p">(</span><span class="o">*</span><span class="n">input_tuple</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>메서드 호출 시 아규먼트로 <code class="highlighter-rouge">**kwargs</code>를 투입한다 가정할 때, <code class="highlighter-rouge">kwargs</code>는 딕셔너리이어야 합니다. 따라서 앞서 정의한 메서드 <code class="highlighter-rouge">kwargs_as_parameter()</code>를 다음과 같이 호출할 수 있습니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">input_dict</span> <span class="o">=</span> <span class="p">{</span><span class="s">'first'</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s">'second'</span><span class="p">:</span> <span class="s">'2'</span><span class="p">,</span> <span class="s">'third'</span><span class="p">:</span> <span class="s">'three'</span><span class="p">,</span> <span class="s">'fourth'</span><span class="p">:</span> <span class="mf">4.0</span><span class="p">}</span>
+<span class="n">kwargs_as_parameter</span><span class="p">(</span><span class="o">**</span><span class="n">input_dict</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="args와-kwargs를-메서드-호출-아규먼트로-유용히-쓸-수-있는-용례"><code class="highlighter-rouge">*args</code>와 <code class="highlighter-rouge">**kwargs</code>를 메서드 호출 아규먼트로 유용히 쓸 수 있는 용례</h3>
+
+<p><code class="highlighter-rouge">zip()</code>은 리스트들을 투입받아 묶어 주는 역할을 합니다. 이 기능을 이용해서 m * n 자료를 n * m 자료로 변환하는 데 쓰이기도 하지요. 행렬의 transpose 격입니다. m * n 자료를 <code class="highlighter-rouge">zip()</code>에 투입하려면 그 속에 들어 있는 길이 n의 리스트를 m번 투입해야 하겠지요. 한두 개라면 별일 아니지만 m이 커진다면 가독성과 생산성, 확정성이 매우 떨어지게 됩니다. 이때 <code class="highlighter-rouge">*args</code>를 활용할 수 있습니다. 아래처럼 말이죠.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">two_col_tuple</span> <span class="o">=</span> <span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">),</span> <span class="p">(</span><span class="s">'a'</span><span class="p">,</span> <span class="s">'b'</span><span class="p">,</span> <span class="s">'c'</span><span class="p">,</span> <span class="s">'d'</span><span class="p">))</span>
+<span class="n">four_col_tuple1</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">two_col_tuple</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">two_col_tuple</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> <span class="c"># long way</span>
+<span class="k">print</span><span class="p">(</span><span class="n">four_col_tuple1</span><span class="p">)</span>
+<span class="c"># ((1, 'a'), (2, 'b'), (3, 'c'), (4, 'd'))</span>
+<span class="n">four_col_tuple2</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">two_col_tuple</span><span class="p">))</span> <span class="c"># short way</span>
+<span class="k">print</span><span class="p">(</span><span class="n">four_col_tuple2</span><span class="p">)</span>
+<span class="c"># ((1, 'a'), (2, 'b'), (3, 'c'), (4, 'd'))</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">cx_Oracle</code>의 <code class="highlighter-rouge">connect()</code>는 데이터베이스의 접속 정보(URL, 포트, 서비스명, ID, PW 등을 아규먼트로 받습니다. 이를 모두 <code class="highlighter-rouge">connect()</code> 메서드에 투입하려면 헷갈려 실수하기 쉽습니다. 물론 사용에 숙달되면 일도 아닐 정도로 쉽겠지만 ‘나만 잘 짜고 잘 읽고 잘 고치는 코드’가 능사는 아니지요. 이 경우 아규먼트를 딕셔너리로 정의한 후 그것을 <code class="highlighter-rouge">**kwargs</code> 형태로 <code class="highlighter-rouge">connect()</code> 메서드에 투입하는 방법이 있습니다. 향후 데이터베이스 접속 정보가 바뀌어 수정해야 할 때 딕셔너리 속 요소들을 쉽게 읽어 바꾸면 되니 관리하기 좋겠지요.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">cx_Oracle</span>
+<span class="c"># express way</span>
+<span class="n">dsn</span> <span class="o">=</span> <span class="n">cx_Oracle</span><span class="o">.</span><span class="n">makedsn</span><span class="p">(</span><span class="s">'localhost'</span><span class="p">,</span> <span class="mi">1521</span><span class="p">,</span> <span class="s">'orcl'</span><span class="p">)</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">cx_Oracle</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s">'sys'</span><span class="p">,</span> <span class="s">'orange'</span><span class="p">,</span> <span class="n">dsn</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="n">cx_Oracle</span><span class="o">.</span><span class="n">SYSDBA</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+<span class="c"># tidy and readable way</span>
+<span class="n">conn_conf</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="s">'user'</span><span class="p">:</span> <span class="s">'sys'</span><span class="p">,</span>
+	<span class="s">'password'</span><span class="p">:</span> <span class="s">'orange'</span><span class="p">,</span>
+	<span class="s">'dsn'</span><span class="p">:</span> <span class="n">dsn</span><span class="p">,</span>
+	<span class="s">'mode'</span><span class="p">:</span> <span class="n">cx_Oracle</span><span class="o">.</span><span class="n">SYSDBA</span>
+<span class="p">}</span>
+<span class="n">conn</span> <span class="o">=</span> <span class="n">cx_Oracle</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="o">**</span><span class="n">conn_conf</span><span class="p">)</span>
+<span class="n">conn</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div></div>
+
+<h3 id="참고자료">참고자료</h3>
+<p>https://www.geeksforgeeks.org/args-kwargs-python/</p>
