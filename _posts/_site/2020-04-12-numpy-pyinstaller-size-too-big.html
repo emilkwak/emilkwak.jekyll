@@ -1,0 +1,146 @@
+<p><code class="highlighter-rouge">PyInstaller</code>는 Python 프로그램 배포를 목적으로 많은 분들이 사용하는 패키지입니다. <code class="highlighter-rouge">cx_Freeze</code>나 <code class="highlighter-rouge">py2exe</code> 등 같은 용도의 패키지가 대체재로 존재하지만 사용법이 간단해 더 인기가 있습니다.</p>
+
+<p><code class="highlighter-rouge">NumPy</code>는 Python 사용자라면 한번쯤 사용해 본 패키지일 것입니다. Python이 대중적인 데이터 분석용 언어로 각광받게 만든 패키지 중 하나가 <code class="highlighter-rouge">NumPy</code>라 보아도 무방하지요.(다른 하나는 <code class="highlighter-rouge">pandas</code>라 할 수 있지요.)</p>
+
+<p>Windows 10 환경에서 <code class="highlighter-rouge">NumPy</code>를 사용하는 Python 프로그램을 작성한 후 <code class="highlighter-rouge">PyInstaller</code>로 패키징하면 패키징된 용량이 지나치게 큰 경향이 있어 의아한 분들이 많을 것입니다. <code class="highlighter-rouge">NumPy</code>를 포함해 두세 개 패키지만 <code class="highlighter-rouge">import</code>했는데 용량이 200 ~ 300MB라니, 당혹스럽지 않을 수 없습니다.</p>
+
+<p>혹시, Windows 10에 Ananconda나 Miniconda를 설치해 쓰고 계신 가운데, <code class="highlighter-rouge">NumPy</code> 패키지를 <code class="highlighter-rouge">conda</code>로 설치하지는 않았나요? Anaconda 또는 Miniconda를 쓰는 것은 상관 없지만, <code class="highlighter-rouge">NumPy</code>를 <code class="highlighter-rouge">conda install numpy</code>로 설치한 경우 <code class="highlighter-rouge">PyInstaller</code> 패키징 용량이 매우 커진다는 사실을 발견했습니다. 반면, <code class="highlighter-rouge">pip</code>로 설치하면 적정한 수준의 용량으로 패키징이 가능합니다.</p>
+
+<p>이는 <code class="highlighter-rouge">conda install numpy</code> 시 mkl 계열의 dll 파일이 대거 패키징되기 때문입니다. 한편, 똑같은 <code class="highlighter-rouge">NumPy</code>를 <code class="highlighter-rouge">pip</code>로 설치하면 mkl 계열 dll이 제외되는데 덕분에 용량을 덜 차지하지요. 실제 용량 차이가 어느정도까지 나는지 실험을 통해 알아봤습니다.</p>
+
+<p>실험의 공통적인 시스템 환경은 다음과 같습니다.</p>
+
+<ul>
+  <li>Windows 10, 64비트, Anaconda 3 설치</li>
+  <li>Python 3.7</li>
+  <li>Python 가상환경 <code class="highlighter-rouge">conda create</code>로 생성</li>
+  <li><code class="highlighter-rouge">PyInstaller</code>: 3.6</li>
+  <li><code class="highlighter-rouge">NumPy</code>
+    <ul>
+      <li><code class="highlighter-rouge">conda install</code>: 1.18.1</li>
+      <li><code class="highlighter-rouge">pip install</code>: 1.18.2</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="실험-1-conda-install-numpy-후-pyinstaller-패키징">실험 1: <code class="highlighter-rouge">conda install numpy</code> 후 <code class="highlighter-rouge">PyInstaller</code> 패키징</h2>
+
+<p>우선 Python 3.7 기준의 Python 가상환경을 만들고, <code class="highlighter-rouge">NumPy</code>를 <code class="highlighter-rouge">conda install</code>로 설치합니다. <code class="highlighter-rouge">PyInstaller</code>까지 설치(<code class="highlighter-rouge">pip install</code>로)합니다.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conda create -n numpy_from_conda python=3.7
+conda activate numpy_from_conda
+conda install numpy
+pip install pyinstaller
+</code></pre></div></div>
+
+<p>이제 <code class="highlighter-rouge">NumPy</code>를 쓰는 간단한 Python 프로그램을 작성합니다. 임의의 행렬 두 개를 행렬곱하는 예제입니다. 오로지 <code class="highlighter-rouge">NumPy</code>만 <code class="highlighter-rouge">import</code>해 사용한 간단한 소스코드라고 할 수 있지요. 똑같은 예제를 두 번째 <code class="highlighter-rouge">pip install numpy</code> 실험에도 사용할 예정입니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># matmul_example.py</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="n">np</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">mat_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">mat_b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">mat_a</span><span class="p">,</span> <span class="n">mat_b</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>이제 <code class="highlighter-rouge">PyInstaller</code>로 패키징을 해 보겠습니다. <code class="highlighter-rouge">--onefile</code> 옵션을 적용한 경우와 그렇지 않은 경우, 두 경우를 모두 보겠습니다. 참고로, <code class="highlighter-rouge">numpy_from_conda</code>로 <code class="highlighter-rouge">conda activate</code>된 상태를 유지해야 합니다.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pyinstaller --onefile matmul_example.py
+dir dist\matmul_example.exe
+
+2020-04-11  오후 ..:..       206,681,582 matmul_example.exe
+               1개 파일         206,681,582 바이트
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">--onefile</code> 옵션 없이 패키징하면 어떻게 될까요?</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pyinstaller --onefile matmul_example.py
+dir dist\matmul_example
+
+2020-04-11  오후 ..:..    &lt;DIR&gt;          .
+2020-04-11  오후 ..:..    &lt;DIR&gt;          ..
+2020-04-11  오후 ..:..         3,554,703 matmul_example.exe
+2020-04-11  오후 ..:..             1,037 matmul_example.exe.manifest
+2020-04-03  오후 ..:..            19,208 api-ms-win-core-console-l1-1-0.dll
+2020-04-03  오후 ..:..            18,696 api-ms-win-core-datetime-l1-1-0.dll
+2020-04-03  오후 ..:..            18,696 api-ms-win-core-debug-l1-1-0.dll
+.......
+2020-04-11  오후 ..:..    &lt;DIR&gt;          mkl
+2020-04-06  오전 ..:..        43,504,000 mkl_avx.dll
+2020-04-06  오전 ..:..        40,924,032 mkl_avx2.dll
+2020-04-06  오전 ..:..        51,629,952 mkl_avx512.dll
+.......
+2020-04-06  오전 ..:..        71,339,904 mkl_core.dll
+2020-04-06  오전 ..:..        35,575,168 mkl_def.dll
+2020-04-06  오전 ..:..        32,865,664 mkl_intel_thread.dll
+2020-04-06  오전 ..:..        41,196,416 mkl_mc.dll
+2020-04-06  오전 ..:..        42,454,400 mkl_mc3.dll
+.......
+2020-04-06  오전 ..:..        28,328,832 mkl_pgi_thread.dll
+2020-04-06  오전 ..:..        15,146,880 mkl_rt.dll
+2020-04-06  오전 ..:..         7,586,176 mkl_scalapack_ilp64.dll
+2020-04-06  오전 ..:..         7,527,296 mkl_scalapack_lp64.dll
+2020-04-06  오전 ..:..        18,359,168 mkl_sequential.dll
+2020-04-06  오전 ..:..        20,887,936 mkl_tbb_thread.dll
+2020-04-06  오전 ..:..        13,028,224 mkl_vml_avx.dll
+2020-04-06  오전 ..:..        12,949,376 mkl_vml_avx2.dll
+2020-04-06  오전 ..:..        12,604,800 mkl_vml_avx512.dll
+2020-04-06  오전 ..:..         6,645,632 mkl_vml_cmpt.dll
+2020-04-06  오전 ..:..         6,877,056 mkl_vml_def.dll
+2020-04-06  오전 ..:..        12,032,896 mkl_vml_mc.dll
+2020-04-06  오전 ..:..        11,888,512 mkl_vml_mc2.dll
+2020-04-06  오전 ..:..        11,977,088 mkl_vml_mc3.dll
+...
+              91개 파일         565,684,976 바이트
+</code></pre></div></div>
+
+<p>요컨대 <code class="highlighter-rouge">--onefile</code> 때는 206MB, <code class="highlighter-rouge">--onefile</code> 아닐 때는 무려 565MB로 패키징됩니다. 행렬곱 하나 하는 장난감 프로그램의 크기가 이정도라는 게 말이 안되지요? mkl 계열 dll들이 큰 용량의 주범인데 이것들을 어떻게 제외시킬 수 있을까요?</p>
+
+<h2 id="실험-2-pip-install-numpy-후-pyinstaller-패키징">실험 2: <code class="highlighter-rouge">pip install numpy</code> 후 <code class="highlighter-rouge">PyInstaller</code> 패키징</h2>
+
+<p>이번에는 Python 3.7 기준 가상환경을 만들고, <code class="highlighter-rouge">NumPy</code>를 <code class="highlighter-rouge">pip install</code>로 설치합니다. <code class="highlighter-rouge">PyInstaller</code>까지 설치합니다.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>conda create -n numpy_from_pip python=3.7
+conda activate numpy_from_pip
+pip install numpy pyinstaller
+</code></pre></div></div>
+
+<p>첫 번째 실험(<code class="highlighter-rouge">conda install numpy</code>)때의 예제 프로그램을 <code class="highlighter-rouge">PyInstaller</code>로 패키징해 보겠습니다. <code class="highlighter-rouge">numpy_from_pip</code>로 <code class="highlighter-rouge">conda activate</code>된 상태여야 합니다.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pyinstaller --onefile matmul_example.py
+dir dist\matmul_example.exe
+
+2020-04-11  오후 ..:..        19,334,062 matmul_example.exe
+               1개 파일          19,334,062 바이트
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">--onefile</code> 옵션을 적용해 보겠습니다.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pyinstaller --onefile matmul_example.py
+dir dist\matmul_example
+
+2020-04-11  오후 ..:..    &lt;DIR&gt;          .
+2020-04-11  오후 ..:..    &lt;DIR&gt;          ..
+2020-04-11  오후 ..:..         3,554,246 matmul_example.exe
+2020-04-11  오후 ..:..             1,037 matmul_example.exe.manifest
+2020-04-03  오후 ..:..            19,208 api-ms-win-core-console-l1-1-0.dll
+2020-04-03  오후 ..:..            18,696 api-ms-win-core-datetime-l1-1-0.dll
+2020-04-03  오후 ..:..            18,696 api-ms-win-core-debug-l1-1-0.dll
+...
+              59개 파일          49,431,319 바이트
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">--onefile</code> 때는 19MB, <code class="highlighter-rouge">--onefile</code> 아닐 때는 49MB로 패키징됩니다. 뭔가 딱 예상했던, 적정해 보이는 크기이죠? mkl 계열 dll이 하나도 생성되지 않았음을 볼 수 있습니다.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dir dist\matmul_example
+
+파일을 찾을 수 없습니다.
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">PyInstaller</code>를 사용한 Python 프로그램 패키징 배포 시 용량이 과도하게 크다 싶으면 <code class="highlighter-rouge">NumPy</code>가 <code class="highlighter-rouge">conda</code>로 설치되었는지 확인해 보시고 그렇다면 <code class="highlighter-rouge">pip</code>로 재설치해 보시기 바랍니다. 매우 간단한 행렬곱 프로그램을 패키징하는데, <code class="highlighter-rouge">--onefile</code> 기준으로 19MB면 되었을 것이 206MB가 될 뻔 했으니까요.(<code class="highlighter-rouge">--onefile</code> 아닌 경우에는 더 심각합니다. 49MB vs. 565MB이니까요.)</p>
+
+<h2 id="참고자료">참고자료</h2>
+<ul>
+  <li><a href="https://github.com/pyinstaller/pyinstaller/issues/2270">MKL DLLs cannot be excluded using –exclude-module</a></li>
+</ul>

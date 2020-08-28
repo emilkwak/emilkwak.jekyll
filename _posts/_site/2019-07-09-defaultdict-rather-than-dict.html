@@ -1,0 +1,73 @@
+<p>딕셔너리 자료구조는 Python뿐 아니라 Java나 C++에서더 유용히 사용됩니다. Python의 딕셔너리는 <code class="highlighter-rouge">dict</code>라는 키워드로 선언되는데 Java 등에 비해 그 사용법이 간편하여 여러가지 용도로 자주 사용됩니다.</p>
+
+<p>데이터 분석을 위한 데이터 처리 단계에서 튜플(<code class="highlighter-rouge">tuple</code>) 데이터를 다뤄야 하는 경우가 많습니다. 사실상 덩치가 큰 정형 데이터는 왠만하면 튜플의 리스트(<code class="highlighter-rouge">list</code>)로 주어진다고 해도 무방하지요. 이와 같이 튜플의 리스트 형태로 주어진 데이터를 능숙히 처리하는 게 데이터 분석의 중요 소양 중 하나이지요.</p>
+
+<p>대표적인 경우가 딕셔너리(<code class="highlighter-rouge">dict</code>)에 데이터 주워 담기입니다. 딕셔너리의 키(key)로 군집화한 결과가 값(value)이 됩니다. 데이터를 잘 처리해 만든 딕셔너리 하나만으로도, Pandas 같은 라이브러리 없이도, 데이터 분석의 성과를 충분히 보여줄 수 있습니다. 그만큼 유용하게 중요하고 쓰이는 자료형이지요.</p>
+
+<p>인구가 가장 많은 도시 순위 20위까지의 데이터가 주어졌을 때 어떤 국가의 도시가 순위에 많이 등장하는지 궁금할 수 있겠지요? 이 질문에 대한 대답을 찾기 위한 데이터 분석 과정을 거쳐 봅시다. 가장 간단하게는 다음과 같이 접근하겠죠.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">cities</span> <span class="o">=</span>\
+<span class="p">[(</span><span class="s">'Chongqing'</span><span class="p">,</span> <span class="s">'China'</span><span class="p">,</span> <span class="mi">30165500</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Shanghai'</span><span class="p">,</span> <span class="s">'China'</span><span class="p">,</span> <span class="mi">24183300</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Beijing'</span><span class="p">,</span> <span class="s">'China'</span><span class="p">,</span> <span class="mi">21707000</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Istanbul'</span><span class="p">,</span> <span class="s">'Turkey'</span><span class="p">,</span> <span class="mi">15029231</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Karachi'</span><span class="p">,</span> <span class="s">'Pakistan'</span><span class="p">,</span> <span class="mi">14910352</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Dhaka'</span><span class="p">,</span> <span class="s">'Bangladesh'</span><span class="p">,</span> <span class="mi">14399000</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Tokyo'</span><span class="p">,</span> <span class="s">'Japan'</span><span class="p">,</span> <span class="mi">13515271</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Moscow'</span><span class="p">,</span> <span class="s">'Russia'</span><span class="p">,</span> <span class="mi">13200000</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Guangzhou'</span><span class="p">,</span> <span class="s">'China'</span><span class="p">,</span> <span class="mi">13081000</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Shenzhen'</span><span class="p">,</span> <span class="s">'China'</span><span class="p">,</span> <span class="mi">12528300</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Mumbai'</span><span class="p">,</span> <span class="s">'India'</span><span class="p">,</span> <span class="mi">12442373</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'São Paulo'</span><span class="p">,</span> <span class="s">'Brazil'</span><span class="p">,</span> <span class="mi">12038000</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Kinshasa'</span><span class="p">,</span> <span class="s">'Democratic Republic of the Congo'</span><span class="p">,</span> <span class="mi">11462000</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Tianjin'</span><span class="p">,</span> <span class="s">'China'</span><span class="p">,</span> <span class="mi">11249000</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Lahore'</span><span class="p">,</span> <span class="s">'Pakistan'</span><span class="p">,</span> <span class="mi">11126000</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Delhi'</span><span class="p">,</span> <span class="s">'India'</span><span class="p">,</span> <span class="mi">11034555</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Jakarta'</span><span class="p">,</span> <span class="s">'Indonesia'</span><span class="p">,</span> <span class="mi">10624000</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Dongguan'</span><span class="p">,</span> <span class="s">'China'</span><span class="p">,</span> <span class="mi">10615000</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Seoul'</span><span class="p">,</span> <span class="s">'South Korea'</span><span class="p">,</span> <span class="mi">9806000</span><span class="p">),</span>
+ <span class="p">(</span><span class="s">'Foshan'</span><span class="p">,</span> <span class="s">'China'</span><span class="p">,</span> <span class="mi">9279000</span><span class="p">)]</span>
+
+<span class="n">dict_by_country</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">city</span> <span class="ow">in</span> <span class="n">cities</span><span class="p">:</span>
+    <span class="n">city_name</span><span class="p">,</span> <span class="n">country_name</span> <span class="o">=</span> <span class="n">city</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">dict_by_country</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">city_name</span><span class="p">)</span>
+    <span class="k">except</span> <span class="nb">KeyError</span><span class="p">:</span>
+        <span class="n">dict_by_country</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">city_name</span><span class="p">]</span>
+</code></pre></div></div>
+
+<p>보시다시피 <code class="highlighter-rouge">KeyError</code>를 반드시 <code class="highlighter-rouge">except</code>해 줘야 합니다. 딕셔너리를 처음 선언하면 빈(empty) 상태이므로 키로 접근(access)하면 필연적으로 <code class="highlighter-rouge">KeyError</code>를 일으킵니다. 어쩔 수 없이 추가한 <code class="highlighter-rouge">try</code>/<code class="highlighter-rouge">except</code> 부분이 사실 참 눈에 거슬립니다. 필요한 이유는 알겠는데 정녕 저렇게 지저분하게 코드를 만들어야만 할까요?</p>
+
+<p>이럴 때 사용할 수 있는 게 <code class="highlighter-rouge">defaultdict</code>입니다. <code class="highlighter-rouge">defaultdict</code>는 <code class="highlighter-rouge">collections</code> 라이브러리에 탑재되어 있습니다. <code class="highlighter-rouge">defaultdict</code>는 딕셔너리(dict)와 거의 똑같은 용법으로 사용할 수 있습니다. 다른 점은 나온 적 없는 키로 접근을 해도 <code class="highlighter-rouge">KeyError</code>를 일으키지 않고 무언가 초기 값(default value)를 내뱉는다는 데 있습니다. 그래서 이름이 <code class="highlighter-rouge">defaultdict</code>인가 보지요.</p>
+
+<p>단, <code class="highlighter-rouge">defaultdict</code>를 선언할 때 <code class="highlighter-rouge">default_factory</code>라는 인자를 입력해야 하는데 일반적으로 Python의 기본 자료형을 씁니다. <code class="highlighter-rouge">int</code>, <code class="highlighter-rouge">float</code> 같은 자료형부터 <code class="highlighter-rouge">list</code>, <code class="highlighter-rouge">set</code> 같은 자료구조도 가능합니다. <code class="highlighter-rouge">defaultdict</code>를 이용해 위의 코드를 다시 구현해 보시죠. 훨씬 깔끔한 작성이 가능합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">collections</span> <span class="kn">import</span> <span class="n">defaultdict</span>
+
+<span class="n">dict_by_country</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">city</span> <span class="ow">in</span> <span class="n">cities</span><span class="p">:</span>
+    <span class="n">city_name</span><span class="p">,</span> <span class="n">country_name</span> <span class="o">=</span> <span class="n">city</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">dict_by_country</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">city_name</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>거추장스러운 <code class="highlighter-rouge">try</code>/<code class="highlighter-rouge">catch</code>를 사용하지 않아도 되어 훨씬 좋지요? <code class="highlighter-rouge">dict_by_country[country_name].append(city_name)</code>을 한번 살펴 봅시다. <code class="highlighter-rouge">defaultdict</code>인 <code class="highlighter-rouge">dict_by_country</code>는 처음 나오는(본 적 없는) 키의 접근을 필연적으로 겪을 것인데 이때 <code class="highlighter-rouge">defaultdict</code>는 빈 리스트(empty <code class="highlighter-rouge">list</code>)를 반환합니다. 여기에 <code class="highlighter-rouge">append()</code> 처리가 이어지는 것이고요.</p>
+
+<p>또 다른 사례를 한번 보실까요? 위에서 본 인구 순위 데이터를 이용해 순위 목록 속 각 국가가 가지는 인구의 합이 어떻게 되는지 알아봅시다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># using dict</span>
+<span class="n">pop_by_country</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">city</span> <span class="ow">in</span> <span class="n">cities</span><span class="p">:</span>
+    <span class="n">country_name</span><span class="p">,</span> <span class="n">pop</span> <span class="o">=</span> <span class="n">city</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">pop_by_country</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">+=</span> <span class="n">pop</span>
+    <span class="k">except</span> <span class="nb">KeyError</span><span class="p">:</span>
+        <span class="n">pop_by_country</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">pop</span>
+
+<span class="c"># using defaultdict</span>
+<span class="n">pop_by_country</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">city</span> <span class="ow">in</span> <span class="n">cities</span><span class="p">:</span>
+    <span class="n">country_name</span><span class="p">,</span> <span class="n">pop</span> <span class="o">=</span> <span class="n">city</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">pop_by_country</span><span class="p">[</span><span class="n">country_name</span><span class="p">]</span> <span class="o">+=</span> <span class="n">pop</span>
+</code></pre></div></div>
+<p>역시, <code class="highlighter-rouge">defaultdict</code>를 사용한 코드가 훨씬 읽기 좋다는 점을 알 수 있겠죠? 어떤가요? <code class="highlighter-rouge">dict</code> 대신 무조건 <code class="highlighter-rouge">defaultdict</code>를 사용할 필요는 없습니다. 그렇지만 위에서 살표본 예시들과 비슷한 상황에서는 <code class="highlighter-rouge">dict</code> 대신 <code class="highlighter-rouge">defaultdict</code>를 사용해 훨씬 읽기 좋고 관리하기 편한 코드를 작성할 수 있습니다.</p>

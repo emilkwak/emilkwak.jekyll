@@ -1,0 +1,50 @@
+<p>Python의 매력은 그 어떤 프로그래밍 언어보다 리스트(<code class="highlighter-rouge">list</code>) 다루는 방법이 우아(elegant)한 데 있습니다. 리스트 컴프리헨션(list comprehension)은 물론이거니와, <code class="highlighter-rouge">itertools</code>, <code class="highlighter-rouge">numpy</code>, <code class="highlighter-rouge">pandas</code> 같은 라이브러리도 이 우아함에 한 몫씩 하지요.</p>
+
+<p>두 개의 리스트를 붙일(접합, concatenation) 때 단순히 덧셈 기호(<code class="highlighter-rouge">+</code>)를 쓰면 된다는 사실이 정말 기쁘지 않나요? 게다가 내장(built-in) 기능으로 말이지요.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">shu_a</span> <span class="o">=</span> <span class="p">[</span><span class="s">'관우'</span><span class="p">,</span> <span class="s">'장비'</span><span class="p">,</span> <span class="s">'조운'</span><span class="p">,</span> <span class="s">'마초'</span><span class="p">,</span> <span class="s">'황충'</span><span class="p">,</span> <span class="s">'위연'</span><span class="p">]</span> <span class="c"># 삼국지 촉나라의 무장</span>
+<span class="n">shu_b</span> <span class="o">=</span> <span class="p">[</span><span class="s">'제갈량'</span><span class="p">,</span> <span class="s">'방통'</span><span class="p">,</span> <span class="s">'서서'</span><span class="p">,</span> <span class="s">'강유'</span><span class="p">,</span> <span class="s">'법정'</span><span class="p">,</span> <span class="s">'마량'</span><span class="p">]</span> <span class="c"># 삼국지 촉나라의 무관</span>
+
+<span class="n">shu_tot</span> <span class="o">=</span> <span class="n">shu_a</span> <span class="o">+</span> <span class="n">shu_b</span>
+<span class="k">print</span><span class="p">(</span><span class="n">shu_tot</span><span class="p">)</span>
+<span class="c"># ['관우', '장비', '조운', '마초', '황충', '위연', '제갈량', '방통', '서서', '강유', '법정', '마량']</span>
+</code></pre></div></div>
+
+<p>삼국지 촉나라의 무장과 문관이 각각의 리스트로 주어졌을 때 이를 덧셈 기호만으로 붙인 사례입니다. 덧셈에 덧셈, 덧셈에 다시 덧셈을 거듭해 많은 리스트를 계속 붙여 나갈 수 있겠지요? 그런데 이게 편하기만 할까요? 수학의 덧셈 기호는 이항 연산자입니다. Python 리스트 덧셈 또한 그렇지요. n개의 리스트를 붙이려면 덧셈 기호를 (n - 1)번이나 써 줘야 합니다. 다음처럼 말이죠.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">shu_tot</span> <span class="o">=</span> <span class="n">shu_1</span> <span class="o">+</span> <span class="n">shu_2</span> <span class="o">+</span> <span class="n">shu_3</span> <span class="o">+</span> <span class="err">…</span> <span class="o">+</span> <span class="n">shu_n</span>
+</code></pre></div></div>
+
+<p>붙일 리스트 개수가 대여섯 개만 넘어서도 덧셈 기호를 쓰기 귀찮아집니다. 루프(loop)를 써서 아래처럼 할 수도 있겠지만 Python스러운 방법은 아니지요. C/C++스러운 방법 아닌가요? 우리가 원하는 건 이게 아니지요.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">shu_all</span> <span class="o">=</span> <span class="p">[</span><span class="n">shu_1</span><span class="p">,</span> <span class="n">shu_2</span><span class="p">,</span> <span class="n">shu_3</span><span class="p">,</span> <span class="err">…</span><span class="p">,</span> <span class="n">shu_n</span><span class="p">]</span>
+
+<span class="n">shu_tot</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">shu_all</span><span class="p">:</span>
+	<span class="n">shu_tot</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Python스러운 리스트 접합 방법은 <code class="highlighter-rouge">itertools</code>에서 찾을 수 있습니다. <code class="highlighter-rouge">itertools</code>의 <code class="highlighter-rouge">chain()</code> 메스드의 인자인 <code class="highlighter-rouge">*args</code>에 붙일 리스트들을 입력하여 붙여진 리스트를 얻을 수 있습니다. 연습용 데이터를 아래처럼 더 확장해 보시죠. 삼국지 위촉오의 무장과 문관 목록입니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">shu</span> <span class="o">=</span> <span class="p">([</span><span class="s">'관우'</span><span class="p">,</span> <span class="s">'장비'</span><span class="p">,</span> <span class="s">'조운'</span><span class="p">,</span> <span class="s">'마초'</span><span class="p">,</span> <span class="s">'황충'</span><span class="p">,</span> <span class="s">'위연'</span><span class="p">],</span> <span class="p">[</span><span class="s">'제갈량'</span><span class="p">,</span> <span class="s">'방통'</span><span class="p">,</span> <span class="s">'서서'</span><span class="p">,</span> <span class="s">'강유'</span><span class="p">,</span> <span class="s">'법정'</span><span class="p">,</span> <span class="s">'마량'</span><span class="p">])</span> <span class="c"># 삼국지 촉나라의 무장과 무관</span>
+<span class="n">wei</span> <span class="o">=</span> <span class="p">([</span><span class="s">'하후돈'</span><span class="p">,</span> <span class="s">'장료'</span><span class="p">,</span> <span class="s">'서황'</span><span class="p">,</span> <span class="s">'우금'</span><span class="p">,</span> <span class="s">'악진'</span><span class="p">,</span> <span class="s">'장합'</span><span class="p">],</span> <span class="p">[</span><span class="s">'사마의'</span><span class="p">,</span> <span class="s">'순욱'</span><span class="p">,</span> <span class="s">'순유'</span><span class="p">,</span> <span class="s">'곽가'</span><span class="p">,</span> <span class="s">'가후'</span><span class="p">,</span> <span class="s">'정욱'</span><span class="p">])</span> <span class="c"># 삼국지 위나라의 무장과 무관</span>
+<span class="n">wu</span> <span class="o">=</span> <span class="p">([</span><span class="s">'정보'</span><span class="p">,</span> <span class="s">'황개'</span><span class="p">,</span> <span class="s">'한당'</span><span class="p">,</span> <span class="s">'주태'</span><span class="p">,</span> <span class="s">'감녕'</span><span class="p">,</span> <span class="s">'태사자'</span><span class="p">],</span> <span class="p">[</span><span class="s">'주유'</span><span class="p">,</span> <span class="s">'노숙'</span><span class="p">,</span> <span class="s">'여몽'</span><span class="p">,</span> <span class="s">'육손'</span><span class="p">,</span> <span class="s">'제갈근'</span><span class="p">,</span> <span class="s">'장소'</span><span class="p">])</span> <span class="c"># 삼국지 오나라의 무장과 무관</span>
+</code></pre></div></div>
+
+<p>튜플(<code class="highlighter-rouge">tuple</code>) 속 리스트는 총 6개지요. 덧셈 기호로 붙일 생각을 하니 벌써부터 귀찮습니다. 굳이 한다면 다음과 같이 번거롭게 할 수 있겠지요.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tot</span> <span class="o">=</span> <span class="n">shu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">shu</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">wei</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">wei</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">wu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">wu</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+<span class="k">print</span><span class="p">(</span><span class="n">tot</span><span class="p">)</span>
+<span class="c"># ['관우', '장비', '조운', '마초', '황충', '위연', '제갈량', '방통', '서서', '강유', '법정', '마량', '하후돈', '장료', '서황', '우금', '악진', '장합', '사마의', '순욱', '순유', '곽가', '가후', '정욱', '정보', '황개', '한당', '주태', '감녕', '태사자', '주유', '노숙', '여몽', '육손', '제갈근', '장소']</span>
+</code></pre></div></div>
+
+<p>이번에는 같은 데이터를 <code class="highlighter-rouge">itertools</code>의 <code class="highlighter-rouge">chain()</code>으로 우아하게 붙여 볼까요?</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">chain</span>
+
+<span class="n">tot</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">chain</span><span class="p">(</span><span class="o">*</span><span class="n">shu</span><span class="p">,</span> <span class="o">*</span><span class="n">wei</span><span class="p">,</span> <span class="o">*</span><span class="n">wu</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>어떤가요? 별표 문법(asterisk/star syntax)으로 각 튜플을 풀어 헤치고 그것들을 <code class="highlighter-rouge">chain()</code>에 몽땅 집어 넣었더니 싹 다 붙었습니다. 간단(simple)하고 간소(compact)한 것 말고도 장점이 있습니다. 튜플에 들어 있는 리스트가 많거나 적어져도 코드에 손댈 필요가 없다는 점입니다. 확장적인(scalable) 구현이 가능해지는 것이죠.</p>
+
+<p>별것 아닌 것 같아도, 때때로 수백, 수천 개의 리스트를 붙인 후 가공해야 할 일이 종종 생깁니다. 덧셈 기호를 쓰더라도 어떻게든 할 수는 있지만, 보다 Python스럽게 <code class="highlighter-rouge">itertools</code>의 <code class="highlighter-rouge">chain</code>을 써 보는 것은 어떨까요?</p>
